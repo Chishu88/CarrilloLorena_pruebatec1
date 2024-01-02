@@ -2,7 +2,6 @@
 package com.mycompany.carrillolorena_pruebatec1.models;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;

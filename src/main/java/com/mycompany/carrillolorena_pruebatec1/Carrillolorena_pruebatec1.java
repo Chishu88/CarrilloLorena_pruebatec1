@@ -5,6 +5,8 @@ package com.mycompany.carrillolorena_pruebatec1;
 import com.mycompany.carrillolorena_pruebatec1.models.Empleado;
 import com.mycompany.carrillolorena_pruebatec1.services.EmpleadoController;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,7 +15,7 @@ public class Carrillolorena_pruebatec1 {
 
     public static void main(String[] args) {
         
-         EmpleadoController empleadoController = new EmpleadoController();
+        EmpleadoController empleadoController = new EmpleadoController();
         Scanner scanner = new Scanner(System.in);
       
         while (true) {
@@ -27,20 +29,53 @@ public class Carrillolorena_pruebatec1 {
             System.out.print("Ingrese el número de la opción deseada: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consumir el salto de línea
+            scanner.nextLine(); 
 
             switch (choice) {
                 case 1:
-                    // Lógica para agregar un nuevo empleado
+                    // Agregar un nuevo empleado
                     System.out.println("Ingrese el nombre del empleado:");
                     String nombre = scanner.nextLine();
+
+                    // Validar que el nombre no esté vacío
+                    if (nombre.isEmpty()) {
+                        System.out.println("El nombre no puede estar vacío. Intente de nuevo.");
+                        break;
+                    }
+
                     System.out.println("Ingrese el cargo del empleado:");
                     String cargo = scanner.nextLine();
+
+                    // Validar que el cargo no esté vacío
+                    if (cargo.isEmpty()) {
+                        System.out.println("El cargo no puede estar vacío. Intente de nuevo.");
+                        break;
+                    }
+
                     System.out.println("Ingrese el salario del empleado:");
-                    double salario = scanner.nextDouble();
+
+                    // Validar que el salario sea un número válido
+                    double salario = 0;
+                    try {
+                        salario = scanner.nextDouble();
+                    } catch (InputMismatchException e) {
+                        System.out.println("Ingrese un valor numérico para el salario. Intente de nuevo.");
+                        scanner.nextLine(); // Consumir la entrada incorrecta
+                        break;
+                    }
+
                     System.out.println("Ingrese la fecha de inicio del empleado (YYYY-MM-DD):");
                     String fechaInicioStr = scanner.next();
-                    LocalDate fechaInicio = LocalDate.parse(fechaInicioStr);
+
+                    // Validar que la fecha sea un formato válido
+                    LocalDate fechaInicio = null;
+                    try {
+                        fechaInicio = LocalDate.parse(fechaInicioStr);
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Formato de fecha inválido. Utilice el formato YYYY-MM-DD. Intente de nuevo.");
+                        scanner.nextLine(); // Consumir la entrada incorrecta
+                        break;
+                    }
 
                     Empleado nuevoEmpleado = new Empleado(nombre, cargo, salario, fechaInicio);
                     empleadoController.createEmpleado(nuevoEmpleado);
@@ -54,7 +89,7 @@ public class Carrillolorena_pruebatec1 {
                     }
                     break;
                 case 3:
-                    // Lógica para actualizar información de un empleado
+                    // Actualizar información de un empleado
                     System.out.println("Ingrese el ID del empleado que desea actualizar:");
                     Long empleadoId = scanner.nextLong();
                     scanner.nextLine(); // Consumir el salto de línea
@@ -81,7 +116,7 @@ public class Carrillolorena_pruebatec1 {
                         nuevoSalario = scanner.nextDouble();
                         empleadoExistente.setSalario(nuevoSalario);
                         } else {
-                        System.out.println("Entrada no válida. Asegúrese de ingresar un número válido como salario.");
+                        System.out.println("Salario no válido. Asegúrese de ingresar un número válido como salario.");
                         scanner.next(); // Consumir la entrada no válida para evitar un bucle infinito
                         }
 
@@ -99,14 +134,14 @@ public class Carrillolorena_pruebatec1 {
                     }
                     break;
                 case 4:
-                    // Lógica para eliminar un empleado
+                    // Eliminar un empleado
                     System.out.println("Ingrese el ID del empleado que desea eliminar:");
                     Long empleadoIdEliminar = scanner.nextLong();
                     empleadoController.deleteEmpleado(empleadoIdEliminar);
                     System.out.println("Empleado eliminado correctamente.");
                     break;
                 case 5:
-                    // Lógica para buscar empleados por cargo
+                    // Buscar empleados por cargo
                     System.out.println("Ingrese el cargo por el cual desea buscar empleados:");
                     String cargoBusqueda = scanner.nextLine();
                     List<Empleado> empleadosPorCargo = empleadoController.findEmpleadosByCargo(cargoBusqueda);
